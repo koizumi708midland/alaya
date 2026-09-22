@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>操作マニュアル｜文書解析アシスタント</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{ --navy:#1F3A5F; --blue:#2E5496; --amber:#FFD900; --ink:#22272E; --line:#D9DEE7; --bg:#FFFFFF; --soft:#F4F6FA; --hot:#C0392B; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',sans-serif;color:var(--ink);line-height:1.9;background:var(--bg);font-size:16px}
+  .wrap{max-width:820px;margin:0 auto;padding:0 20px 80px}
+  header{background:var(--navy);color:#fff;padding:48px 20px;text-align:center;margin-bottom:8px}
+  header h1{font-size:26px;font-weight:900;letter-spacing:.02em}
+  header p{font-size:14px;opacity:.85;margin-top:10px}
+  .lead{background:var(--soft);border-left:5px solid var(--blue);padding:18px 22px;margin:28px 0;border-radius:0 8px 8px 0;font-size:15px}
+  h2{font-size:21px;font-weight:700;color:var(--navy);margin:44px 0 6px;padding-bottom:8px;border-bottom:2px solid var(--line)}
+  h2 .n{font-family:monospace;color:var(--blue);margin-right:10px;font-size:18px}
+  h3{font-size:17px;font-weight:700;color:var(--blue);margin:26px 0 8px}
+  p{margin:10px 0}
+  ol,ul{margin:10px 0 10px 26px}
+  li{margin:7px 0}
+  .steps{counter-reset:st;list-style:none;margin-left:0}
+  .steps>li{counter-increment:st;position:relative;padding:14px 16px 14px 56px;background:var(--soft);border-radius:8px;margin:10px 0}
+  .steps>li::before{content:counter(st);position:absolute;left:14px;top:14px;width:30px;height:30px;background:var(--navy);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px}
+  .steps>li b{color:var(--navy)}
+  code{background:var(--soft);border:1px solid var(--line);border-radius:4px;padding:2px 7px;font-size:14px;font-family:monospace}
+  .note{border-left:5px solid var(--amber);background:#FFFBEA;padding:14px 18px;margin:16px 0;border-radius:0 8px 8px 0;font-size:14px}
+  .warn{border-left:5px solid var(--hot);background:#FDF3F2;padding:14px 18px;margin:16px 0;border-radius:0 8px 8px 0;font-size:14px}
+  .warn b{color:var(--hot)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff;font-weight:700}
+  tr:nth-child(even) td{background:var(--soft)}
+  .toc{background:var(--soft);border-radius:10px;padding:20px 26px;margin:24px 0}
+  .toc a{color:var(--blue);text-decoration:none}
+  .toc a:hover{text-decoration:underline}
+  .toc li{margin:5px 0}
+  footer{text-align:center;color:#8A94A6;font-size:13px;margin-top:60px;padding-top:24px;border-top:1px solid var(--line)}
+  @media(max-width:600px){ header h1{font-size:21px} h2{font-size:18px} body{font-size:15px} }
+</style>
+</head>
+<body>
+<header>
+  <h1>操作マニュアル</h1>
+  <p>文書解析アシスタント（仮名化AI解析基盤）</p>
+</header>
+<div class="wrap">
+
+  <div class="lead">
+    このアシスタントは、顧問先の資料を生成AIで分析するとき、<b>実名をAIに渡さない</b>ための仕組みです。
+    氏名・住所・法人名などを記号に置き換え、人が確認して承認したうえで、記号のままAIに渡します。
+    結果は、人が読む直前に実名へ戻します。<br>
+    操作はすべて Google Chat の中で行います。
+  </div>
+
+  <div class="toc">
+    <b>目次</b>
+    <ul>
+      <li><a href="#s1">1. 全体の流れ</a></li>
+      <li><a href="#s2">2. 資料を依頼する</a></li>
+      <li><a href="#s3">3. 承認する（最も大切な工程）</a></li>
+      <li><a href="#s4">4. 分析する</a></li>
+      <li><a href="#s5">5. 質問票に回答する</a></li>
+      <li><a href="#s6">6. 誤りを報告する</a></li>
+      <li><a href="#s7">7. やってはいけないこと</a></li>
+      <li><a href="#s8">8. 困ったとき</a></li>
+    </ul>
+  </div>
+
+  <h2 id="s1"><span class="n">1</span>全体の流れ</h2>
+  <p>ひとつの案件は、次の順に進みます。担当者が触れるのは Google Chat だけです。</p>
+  <ol class="steps">
+    <li><b>資料を渡す</b>：案件フォルダに資料を置き、その URL をアシスタントに送る</li>
+    <li><b>承認する</b>：仮名化の結果（どの語が何に置き換わったか）を確認し、承認する</li>
+    <li><b>分析する</b>：操作パネルのボタンで、診断・設計・提案・点検を行う</li>
+    <li><b>受け取る</b>：成果物が Drive に保存される（実名に戻っている）</li>
+  </ol>
+  <div class="note">承認するまで、情報はAIに渡りません。承認は人が行います。</div>
+
+  <h2 id="s2"><span class="n">2</span>資料を依頼する</h2>
+  <ol class="steps">
+    <li>案件フォルダ、またはその中のサブフォルダに、資料を置く</li>
+    <li>資料の URL をコピーする</li>
+    <li>案件スペースで <code>@文書解析アシスタント</code> に続けて URL を貼り、送信する</li>
+    <li>「資料を受け取りました」と応答が返る（この時点では、まだAIに渡っていない）</li>
+  </ol>
+  <p>複数の資料を送るときは、応答を待たずに続けて送れます。ただし1件ずつ承認してください。</p>
+  <div class="warn"><b>医療費の領収書・診断書・処方箋は扱えません。</b>これらは要配慮個人情報にあたるため、ファイル名に「医療費」「診療」などの語があると、受け付けを断ります。</div>
+
+  <h2 id="s3"><span class="n">3</span>承認する（最も大切な工程）</h2>
+  <p>仮名化が終わると、承認カードが届きます。ここが、この仕組みの要です。</p>
+  <h3>突合表を確認する</h3>
+  <p>カードには、どの語が何に置き換わったかの一覧（突合表）が表示されます。次の2点を確認してください。</p>
+  <table>
+    <tr><th>観点</th><th>確認すること</th><th>見つかったら</th></tr>
+    <tr><td>漏れ</td><td>置き換えるべき実名が、そのまま残っていないか</td><td>差し戻して報告する</td></tr>
+    <tr><td>過剰</td><td>置き換えなくてよい語まで置き換えていないか</td><td>承認してよい。ただし報告する</td></tr>
+  </table>
+  <ol class="steps">
+    <li>突合表をスクロールして、実名の残りがないか確認する</li>
+    <li>問題なければ「承認」を押す。AIに渡ってよい状態になる</li>
+    <li>漏れがあれば「差し戻し」を押す。AIには渡らない</li>
+  </ol>
+  <div class="note">誰がいつ承認したかは、記録に残ります。</div>
+
+  <h2 id="s4"><span class="n">4</span>分析する</h2>
+  <p><code>@文書解析アシスタント パネル</code> と送ると、操作パネルが開きます。工程に応じてボタンを押します。</p>
+  <table>
+    <tr><th>ボタン</th><th>すること</th><th>必要な資料</th></tr>
+    <tr><td>案件を始める</td><td>顧問先名・会計期間・フォルダを登録</td><td>—</td></tr>
+    <tr><td>診断を始める</td><td>現状を診断し、質問票を作る</td><td>仕訳帳</td></tr>
+    <tr><td>設計の前提を確認する</td><td>設計に必要な確認事項をまとめる</td><td>仕訳帳＋診断の回答</td></tr>
+    <tr><td>経理設計図を作る</td><td>現状と改善後の業務の流れを作る</td><td>上記＋設計の回答</td></tr>
+    <tr><td>提案書を作る</td><td>顧問先向けの提案書を作る</td><td>経理設計図</td></tr>
+    <tr><td>仕訳監査</td><td>仕訳帳を点検する</td><td>仕訳帳</td></tr>
+  </table>
+  <p>成果物は、案件フォルダの「成果物」に保存されます。氏名・法人名は実名に戻っています。</p>
+
+  <h2 id="s5"><span class="n">5</span>質問票に回答する</h2>
+  <ol class="steps">
+    <li>「成果物」フォルダの質問票（Google ドキュメント）を開く</li>
+    <li>回答欄に記入する。確認事項はチェックボックスに印を付ける</li>
+    <li>文書の URL をコピーし、アシスタントに送る</li>
+    <li>承認する。回答が読み取られ、次の工程に反映される</li>
+  </ol>
+
+  <h2 id="s6"><span class="n">6</span>誤りを報告する</h2>
+  <p>仮名化の漏れや、分析・点検の誤りに気づいたら、その場で報告できます。報告は、判断の基準（モジュール）を良くするために使われます。</p>
+  <ol class="steps">
+    <li>パネルの「誤りを報告」を押す</li>
+    <li>報告の種類を選ぶ（仮名化の漏れ、分析の誤り、など）</li>
+    <li>対象（依頼ID・項目IDなど）と、どこが何が誤っているかを書く</li>
+    <li>「報告する」を押す</li>
+  </ol>
+  <div class="warn"><b>報告に実名は書かないでください。</b>「3行目の法人名」のように位置で示します。書いてしまっても、案件の対応表にある実名は、保存の前に記号へ置き換えられます。</div>
+
+  <h2 id="s7"><span class="n">7</span>やってはいけないこと</h2>
+  <ul>
+    <li>承認カードを確認せずに承認すること</li>
+    <li>この仕組みを介さずに、個人で契約したAIへ顧問先の情報を入力すること</li>
+    <li>医療費の領収書など、要配慮個人情報を含む資料を投入すること</li>
+    <li>成果物を確認せずに、そのまま顧問先へ提出すること（AIの出力には誤りが含まれることがあります）</li>
+  </ul>
+
+  <h2 id="s8"><span class="n">8</span>困ったとき</h2>
+  <table>
+    <tr><th>症状</th><th>対応</th></tr>
+    <tr><td>アシスタントが応答しない</td><td>数分待って、もう一度送る</td></tr>
+    <tr><td>「案件として登録されていません」と出る</td><td>管理者に案件の登録を依頼する</td></tr>
+    <tr><td>エラーが表示された</td><td>文言を控えて、事務所の管理者に伝える</td></tr>
+    <tr><td>誤った資料を投入した</td><td>承認前なら差し戻す。承認後ならすぐ管理者に連絡する</td></tr>
+  </table>
+
+  <footer>
+    文書解析アシスタント 操作マニュアル<br>
+    株式会社ミッドランド経営シフト研究所
+  </footer>
+</div>
+</body>
+</html>
